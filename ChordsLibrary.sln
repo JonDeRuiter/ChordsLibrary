@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1259
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChordsLibrary", "ChordsLibrary.csproj", "{D948B009-639F-41E1-B9FC-47F5BDC97503}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChordFormTest", "..\ChordFormTest\ChordFormTest.csproj", "{667D8E96-F3D6-4928-87AD-71D99189E676}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D948B009-639F-41E1-B9FC-47F5BDC97503}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D948B009-639F-41E1-B9FC-47F5BDC97503}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D948B009-639F-41E1-B9FC-47F5BDC97503}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D948B009-639F-41E1-B9FC-47F5BDC97503}.Release|Any CPU.Build.0 = Release|Any CPU
+		{667D8E96-F3D6-4928-87AD-71D99189E676}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{667D8E96-F3D6-4928-87AD-71D99189E676}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{667D8E96-F3D6-4928-87AD-71D99189E676}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{667D8E96-F3D6-4928-87AD-71D99189E676}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E9BEC87B-6527-4E6B-B6EE-DBBA3999BE6D}
+	EndGlobalSection
+EndGlobal

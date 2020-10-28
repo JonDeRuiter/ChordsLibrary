@@ -1,0 +1,6 @@
+C:\Users\Jonathan\source\repos\ChordsLibrary\obj\Debug\ChordsLibrary.csproj.CoreCompileInputs.cache
+C:\Users\Jonathan\source\repos\ChordsLibrary\bin\Debug\ChordsLibrary.dll
+C:\Users\Jonathan\source\repos\ChordsLibrary\bin\Debug\ChordsLibrary.pdb
+C:\Users\Jonathan\source\repos\ChordsLibrary\obj\Debug\ChordsLibrary.dll
+C:\Users\Jonathan\source\repos\ChordsLibrary\obj\Debug\ChordsLibrary.pdb
+C:\Users\Jonathan\source\repos\ChordsLibrary\obj\Debug\ChordsLibrary.csprojAssemblyReference.cache
