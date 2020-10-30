@@ -8,7 +8,7 @@ namespace ChordsLibrary
     {
         public string ChordName { get; set; }
         public Note RootNote { get; set; }
-        public List<Note> NoteList { get; set; }
+        public List<Note> ChordNoteList { get; set; }
         public int[] NoteDifference { get; set; }
         public string Message { get; set; }
 
@@ -21,7 +21,7 @@ namespace ChordsLibrary
         public Chord(string chordName, List<Note> notes)
         {
             ChordName = chordName;
-            NoteList = notes;
+            ChordNoteList = notes;
         }
 
         public Chord(Note rootNote, int[] noteDifference, string chordName)
@@ -54,7 +54,7 @@ namespace ChordsLibrary
         public static Chord FindChord(List<Note> notesEntered)
         {
             Chord unknownChord = new Chord();
-            unknownChord.NoteList = notesEntered;
+            unknownChord.ChordNoteList = notesEntered;
             unknownChord.RootNote = notesEntered[0];
 
             unknownChord.NoteDifference = FindNoteRelationship(notesEntered);
@@ -92,55 +92,25 @@ namespace ChordsLibrary
             int[] noteRel = new int[(noteNames.Count - 1)];
 
 
-            int rootNote = (int)noteNames[0];
-            int[] enumArray = EnumToIntArray(noteNames);
-            //TODO: first find the index of the root, so that chord inversions work
-            //but do I even want to safeguard these? That will make it harder to return the notes themselves
-            for (int i = 1; i < enumArray.Length; i++)
+            int rootNote = noteNames[0].Index;
+     
+            for (int i = 0; i < noteRel.Length; i++)
             {
-                int safeNote = SafeGuardNotes(rootNote, enumArray[i]);
+                int safeNote = Note.FindNoteIncrement(noteNames[0], noteNames[i]);
                 noteRel[(i - 1)] = safeNote - rootNote;
             }
 
             return noteRel;
         }
-
-        //The enumerable list only represents an octaves worth of notes
-        //real chords may go beyond those limitations but we can still use simple math to understand how they work
-        private static int[] EnumToIntArray(List<NoteNames> notesEntered)
-        {
-            int[] notesByNum = new int[notesEntered.Count - 1];
-            for (int i = 0; i < notesByNum.Length; i++)
-            {
-                notesByNum[i] = (int)notesEntered[i];
-            }
-            return notesByNum;
-
-        }
-
-        //Not all chords start near C, and even the ones that do may extend beyond an octave higher 
-        //so we need to make sure the number representation can accurately define the relationships between notes
-        private static int SafeGuardNotes(int rootNote, int note)
-        {
-            if (note > rootNote)
-            {
-                return note;
-            }
-            else
-            {
-                return (note + 12);
-            }
-        }
-
-
-
+        
         private List<Chord> GenAllChordsFromEntry(Chord origChord)
         {
             List<Chord> allRoots = new List<Chord>();
+            NoteList noteList = new NoteList();
 
             for (int i = 1; i < 13; i++)
             {
-                Chord chord = new Chord((NoteNames)i, origChord.NoteDifference, origChord.ChordName);
+                Chord chord = new Chord(noteList.NoteTree[i], origChord.NoteDifference, origChord.ChordName);
                 allRoots.Add(chord);
             }
 
@@ -150,8 +120,10 @@ namespace ChordsLibrary
         private string ParseChordName(string sbmtdName, int i)
         {
             string parsedName;
+            NoteList noteList = new NoteList();
+            Note note = noteList.NoteTree[i];
             int space = sbmtdName.IndexOf(" "); //First set of characters should be the root note
-            parsedName = ((NoteNames)i).ToString() + sbmtdName.Substring(space);
+            parsedName = (note.PrimaryName + sbmtdName.Substring(space));
 
             return parsedName;
         }

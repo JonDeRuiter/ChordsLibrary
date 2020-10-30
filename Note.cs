@@ -34,18 +34,19 @@ namespace ChordsLibrary
     public class Note
     {
         //private NoteNames NoteNames { get; set; }
-        private string PrimaryName { get; set; }
+        private string primaryName { get; set; }
         private string SecondaryName { get; set; }
         private int index;
         private NoteList List { get; set; }
 
+        public string PrimaryName { get { return primaryName; } set { this.primaryName = value; } }
         public int Index { get { return index; } set { this.index = value; } }
 
 
 
         public Note(string primaryName, string secondaryName, int index)
         {
-            this.PrimaryName = primaryName;
+            this.primaryName = primaryName;
             this.SecondaryName = secondaryName;
             this.Index = index;
             this.List = new NoteList();
@@ -63,12 +64,118 @@ namespace ChordsLibrary
 
         }
 
-        public void MapNotes ()
+        public static List<Note> MapNotes (string[] notesInChord)
         {
-            //TODO: something here from UI to objects
+            //TODO: More options for mapping as overlaods
+            List<Note> chordNotes = MapNoteNames(notesInChord);
+
+            return chordNotes;
+
         }
 
-        public int FindNoteIncrement(Note root, Note toFind)
+        private List<Note> MapNoteNames(string[] notesInChord)
+        {
+            NoteList oNotes = new NoteList();
+            List<Note> mappedNotes = new List<Note>();
+            char sharp = '\x266f'; //UFT-16 encoding
+            char flat = '\x266D';
+
+            foreach (string note in notesInChord)
+            {
+                if (note == "B" + sharp)
+                {
+                    mappedNotes.Add(oNotes.NoteTree[3]);
+                }
+                else if (note == "C")
+                {
+                    mappedNotes.Add(oNotes.NoteTree[3]);
+                }
+                else if (note == "C" + sharp)
+                {
+                    mappedNotes.Add(oNotes.NoteTree[4]);
+                }
+                else if (note == "D" + flat)
+                {
+                    mappedNotes.Add(oNotes.NoteTree[4]);
+                }
+                else if (note == "D")
+                {
+                    mappedNotes.Add(oNotes.NoteTree[5]);
+                }
+                else if (note == "D" + sharp)
+                {
+                    mappedNotes.Add(oNotes.NoteTree[6]);
+                }
+                else if (note == "E" + flat)
+                {
+                    mappedNotes.Add(oNotes.NoteTree[6]);
+                }
+                else if (note == "E")
+                {
+                    mappedNotes.Add(oNotes.NoteTree[7]);
+                }
+                else if (note == "F" + flat)
+                {
+                    mappedNotes.Add(oNotes.NoteTree[7]);
+                }
+                else if (note == "E" + sharp)
+                {
+                    mappedNotes.Add(oNotes.NoteTree[8]);
+                }                
+                else if (note == "F")
+                {
+                    mappedNotes.Add(oNotes.NoteTree[8]);
+                }
+                else if (note == "F" + sharp)
+                {
+                    mappedNotes.Add(oNotes.NoteTree[9]);
+                }
+                else if (note == "G" + flat)
+                {
+                    mappedNotes.Add(oNotes.NoteTree[9]);
+                }
+                else if (note == "G")
+                {
+                    mappedNotes.Add(oNotes.NoteTree[10]);
+                }
+                else if (note == "G" + sharp)
+                {
+                    mappedNotes.Add(oNotes.NoteTree[11]);
+                }
+                else if (note == "A" + flat)
+                {
+                    mappedNotes.Add(oNotes.NoteTree[11]);
+                }
+                else if (note == "A")
+                {
+                    mappedNotes.Add(oNotes.NoteTree[0]);
+                }
+                else if (note == "A" + sharp)
+                {
+                    mappedNotes.Add(oNotes.NoteTree[1]);
+                }
+                else if (note == "B" + flat)
+                {
+                    mappedNotes.Add(oNotes.NoteTree[1]);
+                }
+                else if (note == "B")
+                {
+                    mappedNotes.Add(oNotes.NoteTree[2]);
+                }
+                else if (note == "C" + flat)
+                {
+                    mappedNotes.Add(oNotes.NoteTree[2]);
+                }
+                else
+                {
+                    throw new Exception("How did you... this isn't even a note!!!");
+                }
+            }
+            return mappedNotes;
+        }
+
+
+        public static int FindNoteIncrement(Note root, Note toFind)
         {            
             int i = 0; //this is how we count beyond an octave
 
@@ -78,7 +185,7 @@ namespace ChordsLibrary
             do
             {
                 i++;
-                this.List.Next(checkNote);
+                root.List.Next(checkNote);
             } while (checkNote.index != toFind.index);
 
             return i;

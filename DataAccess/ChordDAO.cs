@@ -69,7 +69,7 @@ namespace ChordsLibrary.DataAccess
 
         public static Chord FindAChord(Chord unknownChord)
         {
-            int chordLength = unknownChord.NoteList.Count;
+            int chordLength = unknownChord.ChordNoteList.Count;
             List<Chord> allChords = GetAllChordData(chordLength.ToString());
             
             //TODO figure out if linq works better here
@@ -163,11 +163,13 @@ namespace ChordsLibrary.DataAccess
         private Chord ChordFromLine(string line)
         {
             Chord chord = new Chord();
+            NoteList noteList = new NoteList();
+
             string[] fieldArray = line.Split(ValDelim);
              
             if (int.TryParse(fieldArray[1], out int rootInt))
             {
-                chord.RootNote = (NoteNames)rootInt;
+                chord.RootNote = noteList.NoteTree[rootInt];
             }
             else
             {
