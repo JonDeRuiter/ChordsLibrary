@@ -6,25 +6,35 @@ using System.Threading.Tasks;
 
 namespace ChordsLibrary
 {
-    class NoteList
+    public class NoteList
     {
 
-        public Note[] NoteTree { get { return NoteTree; } set { this.NoteTree = value; } }
+        private Note[] noteTree;
+
+        public Note[] NoteTree { get { return noteTree; }  set { this.noteTree = value; } }
                
+        //something weird happening here - keeps stopping at note A
         public NoteList()
         {
-            this.NoteTree[0] = new Note("A", null, 0);
-            this.NoteTree[1] = new Note("Asharp", "Bflat", 1);
-            this.NoteTree[2] = new Note("B", "Cflat", 2);
-            this.NoteTree[3] = new Note("C", "Bsharp", 3);
-            this.NoteTree[4] = new Note("Csharp", "Dflat", 4);
-            this.NoteTree[5] = new Note("D", null, 5);
-            this.NoteTree[6] = new Note("Eflat", "Dsharp", 6);
-            this.NoteTree[7] = new Note("E", null, 7);
-            this.NoteTree[8] = new Note("F", "Esharp", 8);
-            this.NoteTree[9] = new Note("Fsharp", "Gflat", 9);
-            this.NoteTree[10] = new Note("G", null, 10);
-            this.NoteTree[11] = new Note("Gsharp", "Aflat", 11);
+            char sharp = '\x266f'; //UFT-16 encoding
+            char flat = '\x266D';
+
+            Note[] tmpNotes = new Note[12];
+
+            tmpNotes[0] = new Note("A", null, 0);
+            tmpNotes[1] = new Note("A" + sharp, "B" + flat, 1);
+            tmpNotes[2] = new Note("B", "C" + flat, 2);
+            tmpNotes[3] = new Note("C", "B" + sharp, 3);
+            tmpNotes[4] = new Note("C" + sharp, "D" + flat, 4);
+            tmpNotes[5] = new Note("D", null, 5);
+            tmpNotes[6] = new Note("E" + flat, "D" + sharp, 6);
+            tmpNotes[7] = new Note("E", null, 7);
+            tmpNotes[8] = new Note("F", "E" + sharp, 8);
+            tmpNotes[9] = new Note("F" + sharp, "G" + flat, 9);
+            tmpNotes[10] = new Note("G", null, 10);
+            tmpNotes[11] = new Note("G" + sharp, "A" + flat, 11);
+
+            this.NoteTree = tmpNotes;
         }
 
         public Note Next(Note note)
@@ -44,6 +54,22 @@ namespace ChordsLibrary
             return nextNote;
         }
 
-      
+      public List<string> NotesToUI()
+      {
+            List<string> UINotes = new List<string>();
+
+            NoteList list = new NoteList();
+
+            foreach (Note note in list.NoteTree)
+            {
+                UINotes.Add(note.PrimaryName);
+                if (!(note.SecondaryName == null))
+                {
+                    UINotes.Add(note.SecondaryName);
+                }
+            }
+
+            return UINotes;
+      }
     }
 }

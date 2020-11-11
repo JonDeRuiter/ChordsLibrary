@@ -35,27 +35,28 @@ namespace ChordsLibrary
     {
         //private NoteNames NoteNames { get; set; }
         private string primaryName { get; set; }
-        private string SecondaryName { get; set; }
+        private string secondaryName { get; set; }
         private int index;
-        private NoteList List { get; set; }
+        //private NoteList List { get; set; }
 
         public string PrimaryName { get { return primaryName; } set { this.primaryName = value; } }
+        public string SecondaryName { get { return secondaryName; } set { this.secondaryName = value; } }
         public int Index { get { return index; } set { this.index = value; } }
 
-
+        //NoteList List = new NoteList();
 
         public Note(string primaryName, string secondaryName, int index)
         {
             this.primaryName = primaryName;
-            this.SecondaryName = secondaryName;
+            this.secondaryName = secondaryName;
             this.Index = index;
-            this.List = new NoteList();
+            //this.List = new NoteList(); 
         }
 
         public Note(Note note)
         {
-            this.PrimaryName = note.PrimaryName;
-            this.SecondaryName = note.SecondaryName;
+            this.primaryName = note.PrimaryName;
+            this.secondaryName = note.SecondaryName;
             this.Index = note.Index;           
         }
 
@@ -64,16 +65,16 @@ namespace ChordsLibrary
 
         }
 
-        public static List<Note> MapNotes (string[] notesInChord)
+        public static List<Note> MapNotes (List<string> notesInChord)
         {
-            //TODO: More options for mapping as overlaods
+            //TODO: More options for mapping as overlaods            
             List<Note> chordNotes = MapNoteNames(notesInChord);
 
             return chordNotes;
 
         }
 
-        private List<Note> MapNoteNames(string[] notesInChord)
+        private static List<Note> MapNoteNames(List<string> notesInChord)
         {
             NoteList oNotes = new NoteList();
             List<Note> mappedNotes = new List<Note>();
@@ -181,12 +182,13 @@ namespace ChordsLibrary
 
             //start counting at the root note
             Note checkNote = new Note(root);
+            NoteList list = new NoteList();
 
-            do
+            while (checkNote.index != toFind.index)
             {
-                i++;
-                root.List.Next(checkNote);
-            } while (checkNote.index != toFind.index);
+                i++;                
+                checkNote = list.Next(checkNote);
+            } 
 
             return i;
         }

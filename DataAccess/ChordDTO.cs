@@ -12,7 +12,7 @@ namespace ChordsLibrary.DataAccess
         private string filePath;
         private List<string> body;
         private Char[] lineDelim;
-        private Char[] valDelim;
+        private char valDelim;
         private string header;
         private string footer;
 
@@ -20,15 +20,15 @@ namespace ChordsLibrary.DataAccess
 
         public string Header { get { return header; } set { this.header = value; } }
         public string Footer { get { return footer; } set { this.footer = value; } }
-        public  Char[] ValDelim
+        public  char ValDelim
         {
             get { return valDelim; }
-            set => valDelim[0] = '|';
+            set { this.valDelim = '|'; }
         }
         public Char[] LineDelim
         {
             get { return lineDelim; }
-            set => lineDelim[0] = '*';
+            set { this.lineDelim[0] = '*'; }
         }
         public List<string> Body { get; set; }
         public string FilePath
@@ -45,10 +45,10 @@ namespace ChordsLibrary.DataAccess
     
         public static string InsertNewChord(List<Chord> chords)
         {
-            //TODO: C Major Triad getting here starts with Bsharp, and has no notes
+            //Chords are all named with the base name somehow
             Chord newChord = chords[0];
             ChordDTO newInsert = new ChordDTO();
-            string chordLength = (newChord.NoteList.Count).ToString();
+            string chordLength = (newChord.NoteDifference.Length).ToString();
 
             var enviroment = System.Environment.CurrentDirectory;
             string projectDirectory = Directory.GetParent(enviroment).Parent.FullName;
@@ -104,9 +104,7 @@ namespace ChordsLibrary.DataAccess
             {
                 allChords.Add(c);
             }            
-            //sort data - do I actually care how?
-            //TODO: figure out of sorting helps at all.
-            allChords.Sort();
+            //If I need to sort data differently, do it here
 
             string fileBody = ChordsToBody(allChords);
 
@@ -126,12 +124,12 @@ namespace ChordsLibrary.DataAccess
         private static string ChordToLine(Chord chord)
         {
             ChordDTO dto = new ChordDTO();
-            string line = chord.RootNote.ToString() + dto.ValDelim[0];
+            string line = chord.RootNote.PrimaryName + dto.valDelim;
 
             foreach (int i in chord.NoteDifference)
             {
                 //just combining notes into a string doesn't let extract them
-                line += chord.NoteDifference[i] + ',';
+                line += i.ToString() + ',';
             }
 
             line += chord.ChordName + dto.LineDelim;

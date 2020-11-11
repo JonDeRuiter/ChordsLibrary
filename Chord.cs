@@ -36,9 +36,8 @@ namespace ChordsLibrary
         {
             if (chord.IsNewChord(chord))
             {
-                //insert chord + all variations of it root c through b
-                //TODO: Figure out how to get chords with the effective same root note to map the the correct one - IE C instead of B Sharp
-                //now just check to make sure that works
+                //insert chord + all variations of it root 
+                chord.NoteDifference = FindNoteRelationship(chord.ChordNoteList);
                 List<Chord> chords = GenAllChordsFromEntry(chord);
                 ChordDTO.InsertNewChord(chords);
             }
@@ -55,20 +54,27 @@ namespace ChordsLibrary
         {
             Chord unknownChord = new Chord();
             unknownChord.ChordNoteList = notesEntered;
-            unknownChord.RootNote = notesEntered[0];
 
-            unknownChord.NoteDifference = FindNoteRelationship(notesEntered);
-
-            if (unknownChord.IsNewChord(unknownChord))
+            if (notesEntered.Count == 0)
             {
-                unknownChord.Message = "Either this is not a formal chord, or we don't have it in our system yet.";
+                unknownChord.Message = "Notes are empty";
             }
             else
             {
-                unknownChord = ChordDAO.FindAChord(unknownChord);
-                unknownChord.Message = "We found your chord!";
-            }
+                unknownChord.RootNote = notesEntered[0];
 
+                unknownChord.NoteDifference = FindNoteRelationship(notesEntered);
+
+                if (unknownChord.IsNewChord(unknownChord))
+                {
+                    unknownChord.Message = "Either this is not a formal chord, or we don't have it in our system yet.";
+                }
+                else
+                {
+                    unknownChord = ChordDAO.FindAChord(unknownChord);
+                    unknownChord.Message = "We found your chord!";
+                }
+            }
             return unknownChord;
         }
 
@@ -89,15 +95,17 @@ namespace ChordsLibrary
         private static int[] FindNoteRelationship(List<Note> noteNames)
         {
             //Need to check this to make sure it functions as expected - [0] should always hold a value of '0'
-            int[] noteRel = new int[(noteNames.Count - 1)];
+            int[] noteRel = new int[(noteNames.Count)];
 
-
+            //rootNote = 3 for C
             int rootNote = noteNames[0].Index;
      
             for (int i = 0; i < noteRel.Length; i++)
             {
-                int safeNote = Note.FindNoteIncrement(noteNames[0], noteNames[i]);
-                noteRel[(i - 1)] = safeNote - rootNote;
+                //int safeNote = Note.FindNoteIncrement(noteNames[0], noteNames[i]);
+                //noteRel[(i - 1)] = safeNote - rootNote;
+                noteRel[i] = Note.FindNoteIncrement(noteNames[0], noteNames[i]);
+
             }
 
             return noteRel;
@@ -108,9 +116,10 @@ namespace ChordsLibrary
             List<Chord> allRoots = new List<Chord>();
             NoteList noteList = new NoteList();
 
-            for (int i = 1; i < 13; i++)
+            //TODO: NEXT this isn't working.... no note lists coming through so the name isn't changin.
+            for (int i = 0; i < 12; i++)
             {
-                Chord chord = new Chord(noteList.NoteTree[i], origChord.NoteDifference, origChord.ChordName);
+                Chord chord = new Chord(noteList.NoteTree[i], origChord.NoteDifference, ParseChordName(origChord.ChordName, i));
                 allRoots.Add(chord);
             }
 
