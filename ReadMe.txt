@@ -11,5 +11,7 @@ Exposed methods:
 A couple TODOs in the code that aren't necessary to start testing it.
 Here are some on my list a little further out:
 1. Make the files 'hidden'
-2. Assess what refactoring would be helpful
-3. Do I really need header and footer properties for the DTO and DAO? I don't think I use them
+2. Get the utf encoding right. Something about the value and line delimiters are converting it to Chinese?
+3. Make sure there is some way to reset the database instead of having to manually delete the files as I mess them up
+4. Assess what refactoring would be helpful
+5. Do I really need header and footer properties for the DTO and DAO? I don't think I use them

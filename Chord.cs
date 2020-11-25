@@ -116,10 +116,11 @@ namespace ChordsLibrary
             List<Chord> allRoots = new List<Chord>();
             NoteList noteList = new NoteList();
 
-            //TODO: NEXT this isn't working.... no note lists coming through so the name isn't changin.
+            //TODO: Get the list of notes for the chord to populate.
             for (int i = 0; i < 12; i++)
             {
                 Chord chord = new Chord(noteList.NoteTree[i], origChord.NoteDifference, ParseChordName(origChord.ChordName, i));
+                chord.ChordNoteList = GetNoteListFromDefinition(chord.RootNote, chord.NoteDifference, noteList);
                 allRoots.Add(chord);
             }
 
@@ -135,6 +136,32 @@ namespace ChordsLibrary
             parsedName = (note.PrimaryName + sbmtdName.Substring(space));
 
             return parsedName;
+        }
+
+        private List<Note> GetNoteListFromDefinition(Note rootNote, int[] noteDifference, NoteList noteList)
+        {
+            List<Note> foundNotes = new List<Note>();
+
+            foundNotes.Add(rootNote);
+
+            for (int i = 1; i < noteDifference.Length; i++)
+            {
+                foundNotes.Add(GetNoteFromRelationship(rootNote, noteDifference[i], noteList));
+            }
+
+            return foundNotes;
+        }
+
+        private Note GetNoteFromRelationship(Note rootNote, int nextRel, NoteList noteList)
+        {
+            Note nextNote = rootNote;
+            
+            for (int i = 0; i < nextRel; i++)
+            {
+                nextNote = noteList.Next(nextNote);
+            }
+
+            return nextNote;
         }
 
 
