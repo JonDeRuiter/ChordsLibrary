@@ -11,8 +11,8 @@ namespace ChordsLibrary.DataAccess
 
         private string filePath;
         private List<string> body;
-        private Char[] lineDelim;
-        private char valDelim;
+        private string lineDelim;
+        private string valDelim;
         private string header;
         private string footer;
 
@@ -20,15 +20,15 @@ namespace ChordsLibrary.DataAccess
 
         public string Header { get { return header; } set { this.header = value; } }
         public string Footer { get { return footer; } set { this.footer = value; } }
-        public  char ValDelim
+        public string ValDelim
         {
             get { return valDelim; }
-            set { this.valDelim = '|'; }
+            set { this.valDelim = "|"; }
         }
-        public Char[] LineDelim
+        public string LineDelim
         {
             get { return lineDelim; }
-            set { this.lineDelim[0] = '*'; }
+            set { this.lineDelim = "*"; }
         }
         public List<string> Body { get; set; }
         public string FilePath
@@ -40,7 +40,8 @@ namespace ChordsLibrary.DataAccess
 
         public ChordDTO()
         {
-
+            this.LineDelim = "";
+            this.ValDelim = "";
         }
     
         public static string InsertNewChord(List<Chord> chords)
@@ -60,7 +61,8 @@ namespace ChordsLibrary.DataAccess
             
             string fullFile = BuildBody(chords);
 
-            string[] lines = fullFile.Split(newInsert.LineDelim);
+            Char[] LineDelim = newInsert.LineDelim.ToCharArray();
+            string[] lines = fullFile.Split(LineDelim);
             int lineCount = lines.Length;
             
 
@@ -76,18 +78,18 @@ namespace ChordsLibrary.DataAccess
         private static string BuildHeader(string numLines, string chordLength)
         {
             string returnString;
-            DateTime lastMod = new DateTime();
+            DateTime lastMod = DateTime.Now;
             string lastModDt = lastMod.ToLongDateString();
-            returnString = "$Header: File for Chords of length {chordLength} contains {numLines} records. Last updated {lastModDt} /n CSV format with RootNote, NoteDifference, ChordName**";
+            returnString = "Header:File for Chords of length " + chordLength +" contains " +numLines+ " records. Last updated " + lastModDt+ " RootNote, NoteDifference, ChordName$$";
             return  returnString;
         }
 
         private static string BuildFooter(string numLines, string chordLength)
         {
             string returnString;
-            DateTime lastMod = new DateTime();
+            DateTime lastMod = DateTime.Now;
             string lastModDt = lastMod.ToLongDateString();
-            returnString = "**$Footer: File for Chords of length {chordLength} wrote {numLines} records. Last updated {lastModDt}";
+            returnString = "$$Footer: File for Chords of length " + chordLength +" wrote " + numLines +" records. Last updated " + lastModDt;
             return returnString;
         }
 
@@ -131,7 +133,7 @@ namespace ChordsLibrary.DataAccess
                 //just combining notes into a string doesn't let extract them
                 line += i.ToString() + ',';
             }
-
+            line += dto.valDelim;
             line += chord.ChordName + dto.LineDelim;
             
             return line;

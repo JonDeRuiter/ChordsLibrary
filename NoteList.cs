@@ -13,7 +13,6 @@ namespace ChordsLibrary
 
         public Note[] NoteTree { get { return noteTree; }  set { this.noteTree = value; } }
                
-        //something weird happening here - keeps stopping at note A
         public NoteList()
         {
             char sharp = '\x266f'; //UFT-16 encoding

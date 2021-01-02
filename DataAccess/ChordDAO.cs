@@ -10,22 +10,22 @@ namespace ChordsLibrary.DataAccess
     {
         private string filePath;
         private List<string> body;
-        private Char[] lineDelim;
-        private Char[] valDelim;
+        private string lineDelim;
+        private string valDelim;
         private string header;
         private string footer;
 
         public string Header { get { return header; } set { this.header = value; }  }
         public string Footer { get { return footer; } set { this.footer = value; }  }
-        public Char[] ValDelim
+        public string ValDelim
         {
             get { return valDelim; }
-            set => valDelim[0] = '|';
+            set => valDelim = "|";
         }
-        public Char[] LineDelim
+        public string LineDelim
         {
             get { return lineDelim; }
-            set => lineDelim[0] = '*';
+            set => lineDelim = "*";
         }
         public List<string> Body { get; set; }
         public string FilePath
@@ -40,7 +40,8 @@ namespace ChordsLibrary.DataAccess
 
         public ChordDAO()
         {
-
+            this.LineDelim = "";
+            this.ValDelim = "";
         }
         public ChordDAO(string chordSize)
         {
@@ -74,11 +75,14 @@ namespace ChordsLibrary.DataAccess
             
             //TODO figure out if linq works better here
             foreach (Chord co in allChords)
-            {
-                if (co.NoteDifference == unknownChord.NoteDifference && co.RootNote == unknownChord.RootNote)
-                {
-                    
-                    return co;
+            {                
+                if (co.RootNote.Index == unknownChord.RootNote.Index)
+                { 
+                    //the int arrays are not comparing
+                    if (co.NoteDifference.SequenceEqual(unknownChord.NoteDifference))
+                    {
+                        return co;
+                    }
                 }
             }
 
@@ -101,7 +105,7 @@ namespace ChordsLibrary.DataAccess
                 {
                     return "The file is empty";
                 }
-
+                //maybe have this put into a string[]??
                 header = GetHeader(fullFile);
                 body = GetBody(fullFile, header.Length);
                 footer = GetFooter(fullFile);
@@ -111,7 +115,7 @@ namespace ChordsLibrary.DataAccess
                 return e.ToString();
                 //TODO: Some sort of logging?
             }
-
+            //get rid of LineDelim
             return body + LineDelim;
         }
 
@@ -119,7 +123,7 @@ namespace ChordsLibrary.DataAccess
         {
             string header;
 
-            int headerEnd = fullFile.IndexOf("**");
+            int headerEnd = fullFile.IndexOf("$$") + 2;
             header = fullFile.Substring(0, headerEnd);
 
             return header;
@@ -128,8 +132,9 @@ namespace ChordsLibrary.DataAccess
         private string GetBody(string fullFile, int endOfHeader)
         {
             string body;
-
-            int bodyEnd = fullFile.LastIndexOf("**");
+            
+            int bodyEnd = fullFile.LastIndexOf("$$");
+            bodyEnd = bodyEnd - endOfHeader;
             body = fullFile.Substring(endOfHeader, bodyEnd);
 
             return body;
@@ -139,8 +144,8 @@ namespace ChordsLibrary.DataAccess
         {
             string footer;
 
-            int bodyEnd = fullFile.LastIndexOf("**");
-            footer = fullFile.Substring(0, bodyEnd);
+            int bodyEnd = fullFile.LastIndexOf("$$");
+            footer = fullFile.Substring(bodyEnd);
 
             return footer;
         }
@@ -148,14 +153,17 @@ namespace ChordsLibrary.DataAccess
         private List<Chord> BodyToChordList(string body)
         {
             List<Chord> chords = new List<Chord>();
+            ChordDAO dao = new ChordDAO();
 
-            string[] splitLines = body.Split(LineDelim);
-
+            string[] splitLines = body.Split(dao.LineDelim.ToCharArray());
+            //getting a blank line at the end here
             foreach (string line in splitLines)
             {
-                chords.Add(ChordFromLine(line));
+                if (line.Trim(' ') != null && line != "")
+                {
+                    chords.Add(ChordFromLine(line));
+                }
             }
-
 
             return chords;
         }
@@ -164,21 +172,32 @@ namespace ChordsLibrary.DataAccess
         {
             Chord chord = new Chord();
             NoteList noteList = new NoteList();
+            ChordDAO dao = new ChordDAO();
 
-            string[] fieldArray = line.Split(ValDelim);
-             
-            if (int.TryParse(fieldArray[1], out int rootInt))
+            string[] fieldArray = line.Split(dao.ValDelim.ToCharArray());
+            string[] noteArray = fieldArray[1].Split(',');
+
+
+            foreach (var item in noteList.NoteTree)
             {
-                chord.RootNote = noteList.NoteTree[rootInt];
+                if (item.PrimaryName == fieldArray[0])
+                {
+                    chord.RootNote = item;
+                }
+                else if (item.SecondaryName == fieldArray[0])
+                {
+                    chord.RootNote = item;
+                }
             }
-            else
-            {
+
+            if (chord.RootNote == null)
+            {                
                 throw new Exception("Error parsing data file: " + line );
             }
+            
+            chord.NoteDifference = GetNoteRelationships(fieldArray[1]);
 
-            chord.NoteDifference = GetNoteRelationships(fieldArray[2]);
-
-            chord.ChordName = fieldArray[3];
+            chord.ChordName = fieldArray[2];
 
             return chord;
         }
@@ -186,9 +205,9 @@ namespace ChordsLibrary.DataAccess
         private int[] GetNoteRelationships(string noteRelString)
         {
             string[] stringArray = noteRelString.Split(',');
-            int[] noteRels = new int[stringArray.Length];
+            int[] noteRels = new int[stringArray.Length - 1];
 
-            for (int i = 0; i < stringArray.Length; i++)
+            for (int i = 0; i < stringArray.Length - 1; i++)
             {
                 int.TryParse(stringArray[i], out noteRels[i]);
             }

@@ -6,30 +6,6 @@ using System.Threading.Tasks;
 
 namespace ChordsLibrary
 {
-    //public enum NoteNames
-    //{ //These seem to get snagged on a first 'instance of' basis. So I'm trying to put the more expected version first.
-    //    C = 1,
-    //    Bsharp = 1,
-    //    Csharp = 2,
-    //    Dflat = 2,
-    //    D = 3,
-    //    Eflat = 4,
-    //    Dsharp = 4,
-    //    E = 5,
-    //    Fflat = 5,
-    //    F = 6,
-    //    Esharp = 6,
-    //    Fsharp = 7,
-    //    Gflat = 7,
-    //    G = 8,
-    //    Aflat = 9,
-    //    Gsharp = 9,
-    //    A = 10,
-    //    Bflat = 11,
-    //    Asharp = 11,
-    //    B = 12,
-    //    Cflat = 12        
-    //}
 
     public class Note
     {

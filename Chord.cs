@@ -65,6 +65,7 @@ namespace ChordsLibrary
 
                 unknownChord.NoteDifference = FindNoteRelationship(notesEntered);
 
+                //TODO: Don't need FindAChord in IsNewChord and in the else
                 if (unknownChord.IsNewChord(unknownChord))
                 {
                     unknownChord.Message = "Either this is not a formal chord, or we don't have it in our system yet.";
