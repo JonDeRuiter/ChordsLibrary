@@ -66,14 +66,14 @@ namespace ChordsLibrary
                 unknownChord.NoteDifference = FindNoteRelationship(notesEntered);
 
                 //TODO: Don't need FindAChord in IsNewChord and in the else
-                if (unknownChord.IsNewChord(unknownChord))
-                {
-                    unknownChord.Message = "Either this is not a formal chord, or we don't have it in our system yet.";
-                }
-                else
+                if (unknownChord.ChordName == null)
                 {
                     unknownChord = ChordDAO.FindAChord(unknownChord);
                     unknownChord.Message = "We found your chord!";
+                }
+                else
+                {
+                    unknownChord.Message = "Either this is not a formal chord, or we don't have it in our system yet.";
                 }
             }
             return unknownChord;
@@ -81,6 +81,9 @@ namespace ChordsLibrary
 
         private bool IsNewChord(Chord chord)
         {
+
+            chord.RootNote = chord.ChordNoteList[0];
+            chord.NoteDifference = FindNoteRelationship(chord.ChordNoteList);
             Chord emptyChord = ChordDAO.FindAChord(chord);
 
             //I just picked an element that will be there everytime
