@@ -10,10 +10,54 @@ namespace ChordsLibrary
     {
 
         //https://en.wikipedia.org/wiki/Chord_(music)
+        //list of links at the bottom
         public static void GenerateChordData()
         {
-            GenTriads();
-            GenSevenths();
+            GenTriads(); //Three Note Chords
+            GenSevenths(); //Four Note Chords
+            GenNinths(); //Five Note Chords
+        }
+
+        public static void GenNinths()
+        {
+            char sharp = '\x266f'; //UFT-16 encoding
+            char flat = '\x266D';
+
+            List<string> noteList = new List<string>();
+            noteList.Add("C");
+            noteList.Add("E");
+            noteList.Add("G");
+            noteList.Add("B");
+            noteList.Add("D");
+            Chord MajorNinth = new Chord("C Major Ninth", Note.MapNotes(noteList));
+            MajorNinth.InsertChord(MajorNinth);
+            noteList.Clear();
+
+            
+            noteList.Add("C");
+            noteList.Add("E" + flat);
+            noteList.Add("G");
+            noteList.Add("B" + flat);
+            noteList.Add("D");
+            Chord MinorNinth = new Chord("C Minor Ninth", Note.MapNotes(noteList));
+            MinorNinth.InsertChord(MinorNinth);
+            noteList.Clear();
+
+            noteList.Add("C");
+            noteList.Add("E");
+            noteList.Add("G");
+            noteList.Add("A");
+            noteList.Add("D");
+            Chord SixNine = new Chord("C 6/9", Note.MapNotes(noteList));
+            SixNine.InsertChord(SixNine);
+            noteList.Clear();
+
+
+
+
+            
+
+
         }
 
         public static void GenSevenths()
@@ -86,6 +130,48 @@ namespace ChordsLibrary
             Chord DominantSeventh = new Chord("G Dominant Seventh", Note.MapNotes(noteList));
             DominantSeventh.InsertChord(DominantSeventh);
             noteList.Clear();
+
+            noteList.Add("C");
+            noteList.Add("E");
+            noteList.Add("G" + sharp);
+            noteList.Add("B" + flat);
+            Chord AlteredSeventh = new Chord("C Altered Seventh", Note.MapNotes(noteList));
+            AlteredSeventh.InsertChord(AlteredSeventh);
+            noteList.Clear();
+
+            noteList.Add("C");
+            noteList.Add("E");
+            noteList.Add("G");
+            noteList.Add("B" + flat);
+            Chord AlteredDomSeventh = new Chord("C Altered Dominant Seventh", Note.MapNotes(noteList));
+            AlteredDomSeventh.InsertChord(AlteredDomSeventh);
+            noteList.Clear();
+
+            noteList.Add("C");
+            noteList.Add("E");
+            noteList.Add("G" + flat);
+            noteList.Add("B" + flat);
+            Chord AlteredDomFltFiveSeventh = new Chord("C Altered Dominant Flat Five Seventh", Note.MapNotes(noteList));
+            AlteredDomFltFiveSeventh.InsertChord(AlteredDomFltFiveSeventh);
+            noteList.Clear();
+
+            noteList.Add("C");
+            noteList.Add("E");
+            noteList.Add("G" + sharp);
+            noteList.Add("B" + flat);
+            Chord AlteredDomSrpFiveSeventh = new Chord("C Altered Dominant Sharp Five Seventh", Note.MapNotes(noteList));
+            AlteredDomSrpFiveSeventh.InsertChord(AlteredDomSrpFiveSeventh);
+            noteList.Clear();
+
+            noteList.Add("C");
+            noteList.Add("E");
+            noteList.Add("G");
+            noteList.Add("B" + flat);
+            noteList.Add("D" + flat);
+            Chord AlteredDomfltNineSeventh = new Chord("C Altered Dominant Flat Nine Seventh", Note.MapNotes(noteList));
+            AlteredDomfltNineSeventh.InsertChord(AlteredDomfltNineSeventh);
+            noteList.Clear();
+
         }
 
         public static void GenTriads()
