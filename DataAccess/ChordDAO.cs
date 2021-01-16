@@ -6,6 +6,7 @@ using System.Text;
 
 namespace ChordsLibrary.DataAccess
 {
+
     class ChordDAO
     {
         private string filePath;
@@ -15,8 +16,11 @@ namespace ChordsLibrary.DataAccess
         private string header;
         private string footer;
 
-        public string Header { get { return header; } set { this.header = value; }  }
-        public string Footer { get { return footer; } set { this.footer = value; }  }
+        private List<Chord> _allChords; //cache chord data while object exists
+
+
+        public string Header { get { return header; } set { this.header = value; } }
+        public string Footer { get { return footer; } set { this.footer = value; } }
         public string ValDelim
         {
             get { return valDelim; }
@@ -34,7 +38,7 @@ namespace ChordsLibrary.DataAccess
             set => filePath = value + ".txt";
             //set => filePath = "~\\ChordLibrary\\Storage\\" + value + ".txt";
         }
-        
+
 
 
 
@@ -48,7 +52,7 @@ namespace ChordsLibrary.DataAccess
             this.FilePath = chordSize;
         }
 
-        public static List<Chord> GetAllChordData(string chordSize)
+        public List<Chord> GetAllChordData(string chordSize)
         {
             //read data   
             var enviroment = System.Environment.CurrentDirectory;
@@ -58,26 +62,29 @@ namespace ChordsLibrary.DataAccess
             string chordString;
             ChordDAO dao = new ChordDAO(projectDirectory);
             chordString = dao.ReadData(dao);
-                        
+
             List<Chord> allChords = new List<Chord>();
             if (chordString != "The file is empty")
             {
                 allChords = dao.BodyToChordList(chordString);
+                this._allChords = allChords;
             }
 
             return allChords;
         }
 
-        public static Chord FindAChord(Chord unknownChord)
+        public Chord FindAChord(Chord unknownChord)
         {
             int chordLength = unknownChord.ChordNoteList.Count;
-            List<Chord> allChords = GetAllChordData(chordLength.ToString());
-            
-            //TODO figure out if linq works better here
-            foreach (Chord co in allChords)
-            {                
+            if (_allChords.Count == 0)
+            {
+                _allChords = GetAllChordData(chordLength.ToString());
+            }
+
+            foreach (Chord co in _allChords)
+            {
                 if (co.RootNote.Index == unknownChord.RootNote.Index)
-                { 
+                {
                     //the int arrays are not comparing
                     if (co.NoteDifference.SequenceEqual(unknownChord.NoteDifference))
                     {
@@ -86,7 +93,31 @@ namespace ChordsLibrary.DataAccess
                 }
             }
 
+            FindPossibleInversions(unknownChord);
+
             return new Chord();
+        }
+
+        private List<Chord> FindPossibleInversions(Chord unknownChord)
+        {
+            List<Chord> possibleInversions = _allChords;
+
+            //subtract chords that don't have the same notes as the chord we're finding
+            foreach (Note note in unknownChord.ChordNoteList)
+            {
+                foreach (Chord chord in possibleInversions)
+                {
+                    if (!chord.ChordNoteList.Contains(note))
+                    {
+                        possibleInversions.Remove(chord);
+                    }
+                }
+
+
+            }
+
+
+            return possibleInversions;
         }
 
         private string ReadData(ChordDAO dao)

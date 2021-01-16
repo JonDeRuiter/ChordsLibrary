@@ -11,7 +11,7 @@ namespace ChordsLibrary
         public List<Note> ChordNoteList { get; set; }
         public int[] NoteDifference { get; set; }
         public string Message { get; set; }
-
+        private List<Chord> ChordDataste = new List<Chord>();
 
         public Chord()
         {
@@ -120,7 +120,6 @@ namespace ChordsLibrary
             List<Chord> allRoots = new List<Chord>();
             NoteList noteList = new NoteList();
 
-            //TODO: Get the list of notes for the chord to populate.
             for (int i = 0; i < 12; i++)
             {
                 Chord chord = new Chord(noteList.NoteTree[i], origChord.NoteDifference, ParseChordName(origChord.ChordName, i));
@@ -168,6 +167,26 @@ namespace ChordsLibrary
             return nextNote;
         }
 
+        //TODO: Implement this in the class so that we can detect chords that are missordered
+        private List<Chord> FindPossibleChordInversions(Chord unknownChord)
+        {
+            List<Chord> shuffledChords = new List<Chord>();
+
+            for (int i = 0; i < unknownChord.ChordNoteList.Count; i++)
+            {
+
+                foreach ()
+                {
+                    unknownChord.ChordNoteList[i];
+                }
+
+            }
+
+
+            return shuffledChords;
+        }
+
+        
 
     }
 }
