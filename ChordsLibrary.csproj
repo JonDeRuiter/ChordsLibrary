@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chord.cs" />
+    <Compile Include="ChordManager.cs" />
     <Compile Include="DataAccess\ChordDAO.cs" />
     <Compile Include="DataAccess\ChordDTO.cs" />
     <Compile Include="GenChordDB.cs" />

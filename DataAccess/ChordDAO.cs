@@ -113,11 +113,16 @@ namespace ChordsLibrary.DataAccess
                     }
                 }
 
-
+                //There may be chords that get through that are no actual inversions, in the case of note duplication for instance
             }
 
 
             return possibleInversions;
+        }
+
+        private void EmptyCache()
+        {
+            _allChords = null;
         }
 
         private string ReadData(ChordDAO dao)

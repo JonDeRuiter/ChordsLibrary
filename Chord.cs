@@ -31,70 +31,19 @@ namespace ChordsLibrary
             NoteDifference = noteDifference;
         }
 
+        public void ParseChord()
+        {
+
+        }
+
         //Insert Chord if new
-        public string InsertChord(Chord chord)
+        public void InsertChord(Chord chord)
         {
-            if (chord.IsNewChord(chord))
-            {
-                //insert chord + all variations of it root 
-                chord.NoteDifference = FindNoteRelationship(chord.ChordNoteList);
-                List<Chord> chords = GenAllChordsFromEntry(chord);
-                ChordDTO.InsertNewChord(chords);
-            }
-            else
-            {
-                //Don't insert chord
-                return "Chord already exists.";
-            }
-
-            return "Chord saved successfuly";
-        }
-
-        public static Chord FindChord(List<Note> notesEntered)
-        {
-            Chord unknownChord = new Chord();
-            unknownChord.ChordNoteList = notesEntered;
-
-            if (notesEntered.Count == 0)
-            {
-                unknownChord.Message = "Notes are empty";
-            }
-            else
-            {
-                unknownChord.RootNote = notesEntered[0];
-
-                unknownChord.NoteDifference = FindNoteRelationship(notesEntered);
-
-                //TODO: Don't need FindAChord in IsNewChord and in the else
-                if (unknownChord.ChordName == null)
-                {
-                    unknownChord = ChordDAO.FindAChord(unknownChord);
-                    unknownChord.Message = "We found your chord!";
-                }
-                else
-                {
-                    unknownChord.Message = "Either this is not a formal chord, or we don't have it in our system yet.";
-                }
-            }
-            return unknownChord;
-        }
-
-        private bool IsNewChord(Chord chord)
-        {
-
-            chord.RootNote = chord.ChordNoteList[0];
             chord.NoteDifference = FindNoteRelationship(chord.ChordNoteList);
-            Chord emptyChord = ChordDAO.FindAChord(chord);
-
-            //I just picked an element that will be there everytime
-            if (emptyChord.ChordName == null)
-            {
-                return true;
-            }
-
-            return false;
+            List<Chord> chords = GenAllChordsFromEntry(chord);
+            ChordDTO.InsertNewChord(chords);           
         }
-
+        
         //the mathematical relationship between the root note and the rest of the notes in the chord define their chord. This method calculates those relationships
         private static int[] FindNoteRelationship(List<Note> noteNames)
         {
@@ -166,27 +115,5 @@ namespace ChordsLibrary
 
             return nextNote;
         }
-
-        //TODO: Implement this in the class so that we can detect chords that are missordered
-        private List<Chord> FindPossibleChordInversions(Chord unknownChord)
-        {
-            List<Chord> shuffledChords = new List<Chord>();
-
-            for (int i = 0; i < unknownChord.ChordNoteList.Count; i++)
-            {
-
-                foreach ()
-                {
-                    unknownChord.ChordNoteList[i];
-                }
-
-            }
-
-
-            return shuffledChords;
-        }
-
-        
-
     }
 }
