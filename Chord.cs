@@ -31,21 +31,17 @@ namespace ChordsLibrary
             NoteDifference = noteDifference;
         }
 
-        public void ParseChord()
-        {
-
-        }
-
+       
         //Insert Chord if new
-        public void InsertChord(Chord chord)
+        public List<Chord> InsertChord(Chord chord)
         {
             chord.NoteDifference = FindNoteRelationship(chord.ChordNoteList);
             List<Chord> chords = GenAllChordsFromEntry(chord);
-            ChordDTO.InsertNewChord(chords);           
+            return chords;
         }
         
         //the mathematical relationship between the root note and the rest of the notes in the chord define their chord. This method calculates those relationships
-        private static int[] FindNoteRelationship(List<Note> noteNames)
+        public static int[] FindNoteRelationship(List<Note> noteNames)
         {
             //Need to check this to make sure it functions as expected - [0] should always hold a value of '0'
             int[] noteRel = new int[(noteNames.Count)];

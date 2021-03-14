@@ -168,5 +168,32 @@ namespace ChordsLibrary
 
             return i;
         }
+        
+        public bool NoteExists(Note checkNote, List<Note> list)
+        {
+            foreach (Note note in list)
+            {
+                if(checkNote.Equals(note))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public Note GetNoteByIncrement(Note rootNote, int inc)
+        {
+            Note note = new Note();
+            NoteList list = new NoteList();
+            note = rootNote; //start at the root note
+
+            for (int i = 1; i <= inc; i++)//don't need to start at the root note
+            {
+                note = list.Next(note);
+            }
+
+            return note;
+        }
     }
 }

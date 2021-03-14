@@ -38,8 +38,7 @@ namespace ChordsLibrary.DataAccess
             set => filePath = value + ".txt";
             //set => filePath = "~\\ChordLibrary\\Storage\\" + value + ".txt";
         }
-
-
+        public List<Chord> DBChords { get { return _allChords; } }
 
 
         public ChordDAO()
@@ -67,15 +66,58 @@ namespace ChordsLibrary.DataAccess
             if (chordString != "The file is empty")
             {
                 allChords = dao.BodyToChordList(chordString);
-                this._allChords = allChords;
+                
             }
+
+            allChords = FillNoteLists(allChords);
+            this._allChords = allChords;
 
             return allChords;
         }
 
-        public Chord FindAChord(Chord unknownChord)
+        private List<Chord> FillNoteLists(List<Chord> dbChords)
+        {
+            foreach (Chord chord in dbChords)
+	        {
+                chord.ChordNoteList = NoteListFromChordName(chord.RootNote, chord.NoteDifference);
+	        }
+            return dbChords;
+
+        }
+
+        private List<Note> NoteListFromChordName(Note rootNote, int[] noteDif)
+        {
+            List<Note> noteList = new List<Note>();
+
+            noteList.Add(rootNote);
+            for (int i = 1; i <= noteDif.Length; i++)
+            {
+                noteList.Add(rootNote.GetNoteByIncrement(rootNote, noteDif[i]));
+            }
+
+            return noteList;
+        }
+
+    public List<Chord> LoadChordsByCount(int count)
+        {
+            List<Chord> chords = new List<Chord>();
+
+            if (_allChords != null && !(_allChords.Any()) && _allChords[0].ChordNoteList.Count() == count)
+            {
+                return _allChords;
+            }
+            else
+            {
+                chords = GetAllChordData(count.ToString());
+            }
+
+            return chords;
+        }
+
+        public List<Chord> FindAChord(Chord unknownChord)
         {
             int chordLength = unknownChord.ChordNoteList.Count;
+            List<Chord> foundChords = new List<Chord>();
             if (_allChords.Count == 0)
             {
                 _allChords = GetAllChordData(chordLength.ToString());
@@ -85,40 +127,20 @@ namespace ChordsLibrary.DataAccess
             {
                 if (co.RootNote.Index == unknownChord.RootNote.Index)
                 {
-                    //the int arrays are not comparing
+                    //comparing int arrays
                     if (co.NoteDifference.SequenceEqual(unknownChord.NoteDifference))
                     {
-                        return co;
+                        foundChords.Add(co);
+                        return foundChords;
                     }
                 }
             }
 
-            FindPossibleInversions(unknownChord);
+            foundChords = CheckForInversions(unknownChord);
 
-            return new Chord();
+            return foundChords;
         }
 
-        private List<Chord> FindPossibleInversions(Chord unknownChord)
-        {
-            List<Chord> possibleInversions = _allChords;
-
-            //subtract chords that don't have the same notes as the chord we're finding
-            foreach (Note note in unknownChord.ChordNoteList)
-            {
-                foreach (Chord chord in possibleInversions)
-                {
-                    if (!chord.ChordNoteList.Contains(note))
-                    {
-                        possibleInversions.Remove(chord);
-                    }
-                }
-
-                //There may be chords that get through that are no actual inversions, in the case of note duplication for instance
-            }
-
-
-            return possibleInversions;
-        }
 
         private void EmptyCache()
         {
@@ -168,7 +190,7 @@ namespace ChordsLibrary.DataAccess
         private string GetBody(string fullFile, int endOfHeader)
         {
             string body;
-            
+
             int bodyEnd = fullFile.LastIndexOf("$$");
             bodyEnd = bodyEnd - endOfHeader;
             body = fullFile.Substring(endOfHeader, bodyEnd);
@@ -227,10 +249,10 @@ namespace ChordsLibrary.DataAccess
             }
 
             if (chord.RootNote == null)
-            {                
-                throw new Exception("Error parsing data file: " + line );
+            {
+                throw new Exception("Error parsing data file: " + line);
             }
-            
+
             chord.NoteDifference = GetNoteRelationships(fieldArray[1]);
 
             chord.ChordName = fieldArray[2];
@@ -251,6 +273,45 @@ namespace ChordsLibrary.DataAccess
             return noteRels;
         }
 
+        public List<Chord> CheckForInversions(Chord checkChord)
+        {
+            List<Chord> checkList = _allChords; //don't want to manipulate the cached chords
+
+            foreach (Chord chord in checkList) //TODO: Looks like the chord here might not have a notelist?
+            {
+                if (!CheckInversion(checkChord, chord))
+                {
+                    checkList.Remove(chord);
+                }
+
+                if (!CheckInversion(chord, checkChord)) //reversing the order of chords should remove any false positives from multiple of the same notes
+                {
+                    checkList.Remove(chord);
+                }
+            }
+
+            return checkList;
+        }
+
+        private bool CheckInversion(Chord chordOne, Chord chordTwo)
+        {
+            int i = 0;
+            foreach (Note note in chordOne.ChordNoteList)
+            {
+                if (note.NoteExists(note, chordTwo.ChordNoteList))
+                {
+                    i++;
+                }
+            }
+
+            if (i == chordOne.ChordNoteList.Count)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         private void FileCheck(ChordDAO dao)
         {
             if (!File.Exists(dao.FilePath))
@@ -261,11 +322,11 @@ namespace ChordsLibrary.DataAccess
                 }
             }
             //file exists, we don't need to create it
-            }
+        }
 
         private bool FileEmpty(string fileContents)
         {
-            
+
             if (fileContents.Count() >= 1)
             {
                 return true;
@@ -276,7 +337,6 @@ namespace ChordsLibrary.DataAccess
             }
 
         }
-
+        
     }
-
 }

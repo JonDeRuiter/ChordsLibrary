@@ -44,7 +44,7 @@ namespace ChordsLibrary.DataAccess
             this.ValDelim = "";
         }
     
-        public static string InsertNewChord(List<Chord> chords)
+        public static string InsertNewChord(List<Chord> chords, List<Chord> currentChords)
         {
             //Chords are all named with the base name somehow
             Chord newChord = chords[0];
@@ -59,7 +59,7 @@ namespace ChordsLibrary.DataAccess
 
             FileCheck(newInsert);
             
-            string fullFile = BuildBody(chords);
+            string fullFile = BuildBody(chords, currentChords);
 
             Char[] LineDelim = newInsert.LineDelim.ToCharArray();
             string[] lines = fullFile.Split(LineDelim);
@@ -93,13 +93,12 @@ namespace ChordsLibrary.DataAccess
             return returnString;
         }
 
-        private static string BuildBody(List<Chord> chords)
+        private static string BuildBody(List<Chord> chords, List<Chord> currentChords)
         {
-            List<Chord> allChords = new List<Chord>();
+            List<Chord> allChords = currentChords;
             //Access data add to list
             Chord newChord = chords[0];
             int chordLength = newChord.NoteDifference.Length;
-            allChords = ChordDAO.GetAllChordData(chordLength.ToString());
 
             //add new data
             foreach (Chord c in chords)
