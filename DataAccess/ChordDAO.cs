@@ -90,7 +90,7 @@ namespace ChordsLibrary.DataAccess
             List<Note> noteList = new List<Note>();
 
             noteList.Add(rootNote);
-            for (int i = 1; i <= noteDif.Length; i++)
+            for (int i = 1; i < noteDif.Length; i++)
             {
                 noteList.Add(rootNote.GetNoteByIncrement(rootNote, noteDif[i]));
             }
@@ -98,19 +98,22 @@ namespace ChordsLibrary.DataAccess
             return noteList;
         }
 
-    public List<Chord> LoadChordsByCount(int count)
+        public List<Chord> LoadChordsByCount(int count)
         {
             List<Chord> chords = new List<Chord>();
-
-            if (_allChords != null && !(_allChords.Any()) && _allChords[0].ChordNoteList.Count() == count)
-            {
-                return _allChords;
-            }
-            else
+            if(_allChords == null || _allChords.Count() == 0 ) //if empty, fill it
             {
                 chords = GetAllChordData(count.ToString());
             }
-
+            else if (_allChords[0].ChordNoteList.Count() == count) //if the cache has the same number of notes as the chord being searched, use cache
+            {
+                return _allChords;
+            }
+            else //otherwise, get a new cache - won't ever happen
+            {
+                chords = GetAllChordData(count.ToString());
+            }
+            _allChords = chords;
             return chords;
         }
 
@@ -131,12 +134,12 @@ namespace ChordsLibrary.DataAccess
                     if (co.NoteDifference.SequenceEqual(unknownChord.NoteDifference))
                     {
                         foundChords.Add(co);
-                        return foundChords;
+                        return foundChords; //non-inverted chords exit here.
                     }
                 }
             }
 
-            foundChords = CheckForInversions(unknownChord);
+            foundChords.AddRange(CheckForInversions(unknownChord)); 
 
             return foundChords;
         }
@@ -277,7 +280,7 @@ namespace ChordsLibrary.DataAccess
         {
             List<Chord> checkList = _allChords; //don't want to manipulate the cached chords
 
-            foreach (Chord chord in checkList) //TODO: Looks like the chord here might not have a notelist?
+            foreach (Chord chord in checkList.ToList()) 
             {
                 if (!CheckInversion(checkChord, chord))
                 {
@@ -290,7 +293,20 @@ namespace ChordsLibrary.DataAccess
                 }
             }
 
-            return checkList;
+            return AddInversionLable(checkList);
+        }
+
+        private List<Chord> AddInversionLable(List<Chord> invertedChords)
+        {
+            if (invertedChords != null && invertedChords.Count() != 0)
+            {
+                foreach (Chord chord in invertedChords)
+                {
+                    chord.ChordName = chord.ChordName + " - Inversion"; //TODO: Label with 1st, 2nd, etc Inversion. Since each inversion, pops the first note of the last sequence to the last spot
+                }
+            }
+
+            return invertedChords;
         }
 
         private bool CheckInversion(Chord chordOne, Chord chordTwo)

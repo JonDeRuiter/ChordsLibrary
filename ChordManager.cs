@@ -40,21 +40,25 @@ namespace ChordsLibrary
                     chordsReturned = dao.FindAChord(unknownChord);
                     if (chordsReturned.Count == 1)
                     {                       
-                        message = "We found your chord!";
+                        chordsReturned[0].Message = "We found your chord!";
                     }
                     else if (chordsReturned.Count > 1)
                     {
-                        message = "Your chord may be an inversion of one of these chords";
+                        chordsReturned[0].Message = "Your chord may be an inversion of one of these chords";
                     }
                     else
                     {
-                        message = "Either this is not a formal chord, or we don't have it in our system yet.";
+                        Chord chord = new Chord(); //empty chord to return a message
+                        chordsReturned.Add(chord);
+                        chordsReturned[0].Message = "Either this is not a formal chord, or we don't have it in our system yet.";
                     }
                     
                 }
                 else
                 {
-                    message = "Either this is not a formal chord, or we don't have it in our system yet.";
+                    Chord chord = new Chord(); //empty chord to return a message
+                    chordsReturned.Add(chord);
+                    chordsReturned[0].Message = "Either this is not a formal chord, or we don't have it in our system yet.";
                 }
             }
             return chordsReturned;

@@ -42,8 +42,7 @@ namespace ChordsLibrary
         }
 
         public static List<Note> MapNotes (List<string> notesInChord)
-        {
-            //TODO: More options for mapping as overlaods            
+        {                       
             List<Note> chordNotes = MapNoteNames(notesInChord);
 
             return chordNotes;
@@ -173,7 +172,7 @@ namespace ChordsLibrary
         {
             foreach (Note note in list)
             {
-                if(checkNote.Equals(note))
+                if(checkNote.Index == note.Index)
                 {
                     return true;
                 }
